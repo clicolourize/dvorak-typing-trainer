@@ -1,0 +1,5 @@
+# Flask web framework
+flask==3.0.0
+
+# Production server (for deployment)
+gunicorn>=21.0.0
