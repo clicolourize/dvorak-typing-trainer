@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dvorak Typing Trainer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dvorak Typing Trainer</h1>
+            <nav class="mode-tabs">
+                <button class="tab active" data-mode="lessons">Lessons</button>
+                <button class="tab" data-mode="text">Text Training</button>
+                <button class="tab" data-mode="stats">Statistics</button>
+                <button class="tab" data-mode="settings">Settings</button>
+            </nav>
+        </header>
+
+        <main>
+            <section id="lessons-mode" class="mode-content active">
+                <div class="lesson-selector">
+                    <div class="lesson-type">
+                        <h3>2-Letter Lessons</h3>
+                        <div class="lesson-buttons" id="lessons-2"></div>
+                    </div>
+                    <div class="lesson-type">
+                        <h3>4-Letter Lessons</h3>
+                        <div class="lesson-buttons" id="lessons-4"></div>
+                    </div>
+                    <div class="lesson-type">
+                        <h3>Common Words</h3>
+                        <div class="lesson-buttons" id="lessons-words"></div>
+                    </div>
+                </div>
+                <div class="lesson-area" id="lesson-area" style="display: none;">
+                    <div class="lesson-header">
+                        <h2 id="lesson-name"></h2>
+                        <div class="lesson-stats">
+                            <span>Accuracy: <strong id="accuracy">0%</strong></span>
+                            <span>Errors: <strong id="errors">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="lesson-prompt" id="lesson-prompt"></div>
+                    <input type="text" id="lesson-input" class="typing-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+                    <button class="btn btn-secondary" id="reset-lesson">Reset Lesson</button>
+                </div>
+            </section>
+
+            <section id="text-mode" class="mode-content">
+                <div class="text-selector">
+                    <h3>Select Language</h3>
+                    <div class="language-buttons">
+                        <button class="btn language-btn active" data-lang="english">English</button>
+                        <button class="btn language-btn" data-lang="french">French</button>
+                        <button class="btn language-btn" data-lang="spanish">Spanish</button>
+                    </div>
+                </div>
+                <div class="text-selector">
+                    <h3>Select Difficulty</h3>
+                    <div class="difficulty-buttons">
+                        <button class="btn difficulty-btn" data-diff="easy">Easy</button>
+                        <button class="btn difficulty-btn" data-diff="medium">Medium</button>
+                        <button class="btn difficulty-btn" data-diff="hard">Hard</button>
+                    </div>
+                </div>
+                <div class="text-selector">
+                    <h3>Select Mode</h3>
+                    <div class="mode-buttons">
+                        <button class="btn mode-btn active" data-train="full">Full Text</button>
+                        <button class="btn mode-btn" data-train="timer">Timer</button>
+                    </div>
+                </div>
+                <div class="timer-options" id="timer-options" style="display: none;">
+                    <h3>Select Duration</h3>
+                    <div class="duration-buttons">
+                        <button class="btn duration-btn" data-time="1">1 min</button>
+                        <button class="btn duration-btn" data-time="2">2 min</button>
+                        <button class="btn duration-btn" data-time="3">3 min</button>
+                        <button class="btn duration-btn" data-time="5">5 min</button>
+                    </div>
+                </div>
+                <div class="text-area" id="text-area" style="display: none;">
+                    <div class="text-header">
+                        <div class="text-stats">
+                            <span>WPM: <strong id="wpm">0</strong></span>
+                            <span>Accuracy: <strong id="text-accuracy">0%</strong></span>
+                            <span>Errors: <strong id="text-errors">0</strong></span>
+                        </div>
+                        <div class="timer-display" id="timer-display" style="display: none;">
+                            <span id="timer">0:00</span>
+                        </div>
+                    </div>
+                    <div class="text-display" id="text-display"></div>
+                    <input type="text" id="text-input" class="typing-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+                    <button class="btn btn-secondary" id="reset-text">Reset</button>
+                </div>
+                <div class="results-area" id="results-area" style="display: none;">
+                    <h2>Results</h2>
+                    <div class="results-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="result-wpm">0</span>
+                            <span class="stat-label">WPM</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="result-accuracy">0%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="result-errors">0</span>
+                            <span class="stat-label">Errors</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="result-chars">0</span>
+                            <span class="stat-label">Characters</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="result-words">0</span>
+                            <span class="stat-label">Words</span>
+                        </div>
+                    </div>
+                    <button class="btn" id="try-again">Try Again</button>
+                </div>
+            </section>
+
+            <section id="stats-mode" class="mode-content">
+                <div class="stats-container">
+                    <h2>Your Statistics</h2>
+                    <div class="overall-stats">
+                        <div class="stat-box">
+                            <span class="stat-num" id="total-sessions">0</span>
+                            <span class="stat-desc">Total Sessions</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" id="best-wpm">0</span>
+                            <span class="stat-desc">Best WPM</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" id="avg-accuracy">0%</span>
+                            <span class="stat-desc">Avg Accuracy</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" id="lessons-completed">0</span>
+                            <span class="stat-desc">Lessons Completed</span>
+                        </div>
+                    </div>
+                    <h3>Struggling Letters</h3>
+                    <div class="struggling-letters-chart" id="struggling-letters-chart">
+                        <p class="no-data">No error data yet</p>
+                    </div>
+                    <h3>Recent Sessions</h3>
+                    <div class="history-table-container">
+                        <table class="history-table" id="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Diff</th>
+                                    <th>Mode</th>
+                                    <th>WPM</th>
+                                    <th>Acc%</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings-mode" class="mode-content">
+                <div class="settings-container">
+                    <h2>Settings</h2>
+                    <div class="setting-item">
+                        <label>Sound Effects</label>
+                        <button class="btn toggle-btn" id="toggle-sounds">Enabled</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>Reset All Progress</label>
+                        <button class="btn btn-danger" id="reset-progress">Reset</button>
+                    </div>
+                    <p class="warning-text">Warning: This will delete all your achievements, statistics, and session history.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="keyboard" id="keyboard">
+                <div class="keyboard-row">
+                    <div class="key" data-key="`"><span class="dvorak">`</span></div>
+                    <div class="key" data-key="1"><span class="dvorak">1</span></div>
+                    <div class="key" data-key="2"><span class="dvorak">2</span></div>
+                    <div class="key" data-key="3"><span class="dvorak">3</span></div>
+                    <div class="key" data-key="4"><span class="dvorak">4</span></div>
+                    <div class="key" data-key="5"><span class="dvorak">5</span></div>
+                    <div class="key" data-key="6"><span class="dvorak">6</span></div>
+                    <div class="key" data-key="7"><span class="dvorak">7</span></div>
+                    <div class="key" data-key="8"><span class="dvorak">8</span></div>
+                    <div class="key" data-key="9"><span class="dvorak">9</span></div>
+                    <div class="key" data-key="0"><span class="dvorak">0</span></div>
+                    <div class="key" data-key="-"><span class="dvorak">-</span></div>
+                    <div class="key" data-key="="><span class="dvorak">=</span></div>
+                    <div class="key wide" data-key="backspace"><span>←</span></div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key" data-key="q"><span class="dvorak">'</span></div>
+                    <div class="key" data-key="w"><span class="dvorak">,</span></div>
+                    <div class="key" data-key="e"><span class="dvorak">.</span></div>
+                    <div class="key" data-key="r"><span class="dvorak">p</span></div>
+                    <div class="key" data-key="t"><span class="dvorak">y</span></div>
+                    <div class="key" data-key="y"><span class="dvorak">f</span></div>
+                    <div class="key" data-key="u"><span class="dvorak">g</span></div>
+                    <div class="key" data-key="i"><span class="dvorak">c</span></div>
+                    <div class="key" data-key="o"><span class="dvorak">r</span></div>
+                    <div class="key" data-key="p"><span class="dvorak">l</span></div>
+                    <div class="key" data-key="["><span class="dvorak">/</span></div>
+                    <div class="key" data-key="]"><span class="dvorak">\</span></div>
+                    <div class="key" data-key="\\"><span class="dvorak">=</span></div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key" data-key="a"><span class="dvorak">a</span></div>
+                    <div class="key" data-key="s"><span class="dvorak">o</span></div>
+                    <div class="key" data-key="d"><span class="dvorak">e</span></div>
+                    <div class="key" data-key="f"><span class="dvorak">u</span></div>
+                    <div class="key" data-key="g"><span class="dvorak">i</span></div>
+                    <div class="key" data-key="h"><span class="dvorak">d</span></div>
+                    <div class="key" data-key="j"><span class="dvorak">h</span></div>
+                    <div class="key" data-key="k"><span class="dvorak">t</span></div>
+                    <div class="key" data-key="l"><span class="dvorak">n</span></div>
+                    <div class="key" data-key=";"><span class="dvorak">s</span></div>
+                    <div class="key" data-key="'"><span class="dvorak">-</span></div>
+                    <div class="key wide" data-key="enter"><span>Enter</span></div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key" data-key="z"><span class="dvorak">;</span></div>
+                    <div class="key" data-key="x"><span class="dvorak">q</span></div>
+                    <div class="key" data-key="c"><span class="dvorak">j</span></div>
+                    <div class="key" data-key="v"><span class="dvorak">k</span></div>
+                    <div class="key" data-key="b"><span class="dvorak">x</span></div>
+                    <div class="key" data-key="n"><span class="dvorak">b</span></div>
+                    <div class="key" data-key="m"><span class="dvorak">m</span></div>
+                    <div class="key" data-key=","><span class="dvorak">w</span></div>
+                    <div class="key" data-key="."><span class="dvorak">v</span></div>
+                    <div class="key" data-key="/"><span class="dvorak">z</span></div>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key space" data-key=" "><span>Space</span></div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <audio id="sound-error" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"></audio>
+    <audio id="sound-success" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"></audio>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
