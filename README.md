@@ -1,5 +1,6 @@
 # Dvorak Typing Trainer
-Support development: [Ko-Fi](https://ko-fi.com/clicolourize)
+Support development: [Ko-Fi](https://ko-fi.com/clicolourize) • Try the app online: [Live Demo on Render](https://dvorak-typing-trainer.onrender.com/)  
+[![Live App](https://img.shields.io/badge/Live-App-blue)](https://dvorak-typing-trainer.onrender.com/)
 
 A web-based typing trainer for learning the Dvorak keyboard layout. Practice typing in English, French, and Spanish with visual keyboard feedback, lessons, and statistics tracking.
 
